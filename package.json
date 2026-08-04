@@ -1,9 +1,9 @@
 {
   "name": "vercel-mpd-player",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
-  "description": "A Vercel-ready DASH/HLS player using Shaka Player with an allowlisted proxy fallback.",
+  "description": "A Vercel-ready DASH/HLS player using Shaka Player with a public-host proxy fallback.",
   "scripts": {
     "check": "node --check app.js && node --check api/proxy.js",
     "vercel-build": "echo Static player: no build step required"

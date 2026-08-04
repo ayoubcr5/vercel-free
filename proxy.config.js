@@ -1,13 +1,9 @@
 /**
- * Proxy configuration stored in the project source.
+ * Proxy host configuration stored in the project source.
  *
- * Add every media, segment, subtitle, certificate, or DRM-license hostname
- * that the player is authorized to contact through /api/proxy.
- *
- * Exact host example: media.example.com
- * Wildcard example: *.cdn.example.com
- *
- * A global "*" is intentionally not supported.
+ * `*` permits any public HTTP or HTTPS hostname. The proxy still blocks
+ * localhost, private networks, link-local addresses, reserved ranges, and
+ * cloud metadata endpoints through DNS/IP validation in api/proxy.js.
  */
 export const PROXY_ALLOW_HOSTS = ['*'];
 

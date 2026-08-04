@@ -166,12 +166,15 @@ async function validateTarget(url, allowRules) {
 
 function hostMatchesAllowlist(hostname, rules) {
   return rules.some((rule) => {
-    const normalized = rule.toLowerCase().replace(/^https?:\/\//, '').split('/')[0].split(':')[0];
-    if (normalized.startsWith('*.')) {
-      const suffix = normalized.slice(1); // includes the leading dot
-      return hostname.endsWith(suffix) && hostname !== normalized.slice(2);
+    const normalized = rule.toLowerCase().trim();
+    if (normalized === '*') return true;
+
+    const hostRule = normalized.replace(/^https?:\/\//, '').split('/')[0].split(':')[0];
+    if (hostRule.startsWith('*.')) {
+      const suffix = hostRule.slice(1); // includes the leading dot
+      return hostname.endsWith(suffix) && hostname !== hostRule.slice(2);
     }
-    return hostname === normalized;
+    return hostname === hostRule;
   });
 }
 

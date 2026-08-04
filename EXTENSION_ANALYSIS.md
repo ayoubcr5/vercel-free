@@ -35,7 +35,7 @@ A website cannot call `chrome.declarativeNetRequest`, cannot freely override for
 
 - Shaka Player directly in the browser.
 - A Shaka networking request filter.
-- An allowlisted Vercel function that proxies manifests, segments, and license requests when enabled.
+- A Vercel function that proxies manifests, segments, and license requests for public hosts when enabled.
 - A Shaka response filter that restores the original upstream URI so relative DASH segment paths resolve correctly.
 
 ## Licensing note

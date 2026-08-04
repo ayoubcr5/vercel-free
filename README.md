@@ -14,7 +14,7 @@ A clean-room web implementation inspired by the behavior of the Chrome extension
 - Widevine license server and optional service-certificate URL
 - Custom request headers
 - Direct mode for CORS-enabled sources
-- Allowlisted Vercel proxy mode for sources requiring server-side headers or CORS handling
+- Vercel proxy mode for public sources requiring server-side headers or CORS handling
 - Shareable URLs
 - Compatibility with the extension-style hash form: `/#https://example.com/manifest.mpd`
 
@@ -27,29 +27,17 @@ A clean-room web implementation inspired by the behavior of the Chrome extension
 
 Direct playback works without environment variables when the media and license servers permit browser CORS requests.
 
-### Enable the proxy
+### Proxy configuration in the project
 
-The proxy is deliberately disabled until you configure an allowlist. Add this environment variable in **Vercel → Project Settings → Environment Variables**:
+No Vercel environment variable is required. The project is configured to allow every **public HTTP/HTTPS host**:
 
-```text
-PROXY_ALLOW_HOSTS=media.example.com,license.example.com,*.cdn.example.com
+```js
+export const PROXY_ALLOW_HOSTS = ['*'];
 ```
 
-The proxy supports exact hosts and wildcard subdomains. It does not support a global `*`, localhost, private networks, or reserved IP ranges.
+The `*` rule does not permit internal network access. The proxy continues to reject localhost, private IP ranges, link-local addresses, reserved/documentation ranges, and redirects that resolve to those destinations. Only `GET`, `HEAD`, and `OPTIONS` requests are accepted.
 
-Headers allowed by default:
-
-```text
-Authorization, Origin, Referer, User-Agent, X-API-Key
-```
-
-To change that list, set:
-
-```text
-PROXY_ALLOWED_HEADERS=authorization,origin,referer,user-agent,x-api-key,x-custom-token
-```
-
-Redeploy after changing environment variables.
+Allowed custom request headers are configured in `proxy.config.js` through `PROXY_ALLOWED_HEADERS`. Redeploy after editing the configuration file.
 
 ## Player URL formats
 

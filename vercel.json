@@ -2,7 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/proxy.js": {
-      "maxDuration": 300
+      "maxDuration": 300,
+      "regions": [
+        "cdg1"
+      ]
     }
   },
   "headers": [
@@ -27,5 +30,8 @@
         }
       ]
     }
+  ],
+  "regions": [
+    "cdg1"
   ]
 }

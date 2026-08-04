@@ -81,3 +81,20 @@ npm run check
 ```
 
 For a full local Vercel environment, install the Vercel CLI and run `vercel dev`.
+
+## Proxad / init-segment troubleshooting
+
+Version 1.0.2 pins the proxy function to Vercel's Paris region (`cdg1`) and no longer uses the global `fetch()` implementation for upstream media. It resolves and validates the origin once, tries public IPv4 addresses before IPv6, keeps the original TLS hostname/SNI, forwards browser `User-Agent`, `Accept`, language, cache, pragma, conditional, and range headers, and retries alternate resolved addresses for connection-level failures.
+
+Test the init object after redeploying:
+
+```bash
+curl -i 'https://YOUR-PROJECT.vercel.app/api/proxy?url=https%3A%2F%2Fmedia4.stream.proxad.net%2Fmedia%2F0_1_376_init' \
+  -H 'accept: */*' \
+  -H 'cache-control: no-cache' \
+  -H 'pragma: no-cache'
+```
+
+Successful responses include `X-Proxy-Region: cdg1`, `X-Proxy-Upstream`, and `X-Proxy-Upstream-IP`.
+
+When a connection fails, the JSON now exposes the network code, attempted IP, port, and Vercel region. If it still reports `ECONNREFUSED` from `cdg1`, the Proxad origin is rejecting Vercel/datacenter egress at the TCP layer. Browser headers cannot repair a TCP refusal; use direct extension playback or a proxy/VPS on an accepted French consumer or hosting network.

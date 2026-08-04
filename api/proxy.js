@@ -45,7 +45,7 @@ export default async function handler(request, response) {
   if (!allowRules.length) {
     sendJson(response, 503, {
       error: 'Proxy is disabled.',
-      setup: 'Set PROXY_ALLOW_HOSTS in Vercel, for example: media.example.com,license.example.com,*.cdn.example.com'
+      setup: 'Set PROXY_ALLOW_HOSTS in Vercel, for example: vercel-free-red.vercel.app,api-proxad.oqee.net,*.cdn.example.com'
     });
     return;
   }

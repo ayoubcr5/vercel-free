@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="A Vercel-ready MPEG-DASH and HLS player powered by Shaka Player." />
+    <title>MPD Player</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@5.2.4/dist/controls.css" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">DASH · HLS · EME</p>
+          <h1>MPD Player</h1>
+          <p class="subtitle">Play your own <code>.mpd</code> or <code>.m3u8</code> streams, with optional authorized DRM and a Vercel proxy fallback.</p>
+        </div>
+        <span id="support-badge" class="badge">Checking browser…</span>
+      </header>
+
+      <section class="player-card" aria-label="Video player">
+        <div id="video-container" class="video-container">
+          <video id="video" playsinline></video>
+        </div>
+        <div id="now-playing" class="now-playing" hidden>
+          <strong id="now-playing-title">Untitled stream</strong>
+          <span id="now-playing-url"></span>
+        </div>
+      </section>
+
+      <section class="settings-card">
+        <form id="player-form">
+          <div class="field field-wide">
+            <label for="manifest-url">Manifest URL</label>
+            <input id="manifest-url" name="manifest-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://example.com/live/manifest.mpd" required />
+          </div>
+
+          <div class="field">
+            <label for="stream-title">Title</label>
+            <input id="stream-title" name="stream-title" type="text" autocomplete="off" placeholder="My channel" />
+          </div>
+
+          <div class="field toggle-field">
+            <label class="toggle-row" for="use-proxy">
+              <input id="use-proxy" name="use-proxy" type="checkbox" />
+              <span>Use Vercel proxy</span>
+            </label>
+            <small>Enable only when direct playback fails because of CORS or required headers.</small>
+          </div>
+
+          <details class="advanced field-wide">
+            <summary>Headers and DRM</summary>
+            <div class="advanced-grid">
+              <div class="field field-wide">
+                <label for="request-headers">Request headers (JSON)</label>
+                <textarea id="request-headers" name="request-headers" rows="5" spellcheck="false" placeholder='{"Referer":"https://example.com/","Authorization":"Bearer …"}'></textarea>
+                <small>In direct mode, browsers block headers such as <code>Origin</code>, <code>Referer</code>, and <code>User-Agent</code>. Proxy mode can forward explicitly allowed headers.</small>
+              </div>
+
+              <div class="field field-wide">
+                <label for="clear-key">ClearKey data</label>
+                <textarea id="clear-key" name="clear-key" rows="4" spellcheck="false" placeholder='{"key-id-in-hex":"key-in-hex"}'></textarea>
+                <small>Accepts a hex key map, <code>kid:key</code>, an EME JWK set, or an authorized ClearKey license URL.</small>
+              </div>
+
+              <div class="field">
+                <label for="widevine-url">Widevine license URL</label>
+                <input id="widevine-url" name="widevine-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://license.example.com/widevine" />
+              </div>
+
+              <div class="field">
+                <label for="widevine-cert-url">Widevine certificate URL</label>
+                <input id="widevine-cert-url" name="widevine-cert-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://license.example.com/certificate" />
+              </div>
+            </div>
+          </details>
+
+          <div class="actions field-wide">
+            <button id="play-button" class="primary" type="submit">Play stream</button>
+            <button id="stop-button" type="button">Stop</button>
+            <button id="demo-button" type="button">Load demo MPD</button>
+            <button id="copy-link-button" type="button">Copy player link</button>
+          </div>
+
+          <label class="share-secrets field-wide" for="include-private-settings">
+            <input id="include-private-settings" type="checkbox" />
+            Include DRM and headers in copied link
+          </label>
+        </form>
+
+        <div id="status" class="status info" role="status" aria-live="polite">Ready.</div>
+      </section>
+
+      <footer>
+        Use only streams, keys, and license services you are authorized to access.
+      </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/shaka-player@5.2.4/dist/shaka-player.ui.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -2,15 +2,9 @@ import dns from 'node:dns/promises';
 import net from 'node:net';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
+import { PROXY_ALLOW_HOSTS, PROXY_ALLOWED_HEADERS } from '../proxy.config.js';
 
 const MAX_REDIRECTS = 5;
-const DEFAULT_ALLOWED_HEADERS = [
-  'authorization',
-  'origin',
-  'referer',
-  'user-agent',
-  'x-api-key'
-];
 const BLOCKED_FORWARD_HEADERS = new Set([
   'connection',
   'content-length',
@@ -41,11 +35,10 @@ export default async function handler(request, response) {
     return;
   }
 
-  const allowRules = parseCsv(process.env.PROXY_ALLOW_HOSTS);
+  const allowRules = normalizeList(PROXY_ALLOW_HOSTS);
   if (!allowRules.length) {
     sendJson(response, 503, {
-      error: 'Proxy is disabled.',
-      setup: 'Set PROXY_ALLOW_HOSTS in Vercel, for example: vercel-free-red.vercel.app,api-proxad.oqee.net,*.cdn.example.com'
+      error: 'Proxy is disabled because PROXY_ALLOW_HOSTS is empty in proxy.config.js.'
     });
     return;
   }
@@ -65,8 +58,7 @@ export default async function handler(request, response) {
   }
 
   const allowedCustomHeaders = new Set(
-    parseCsv(process.env.PROXY_ALLOWED_HEADERS || DEFAULT_ALLOWED_HEADERS.join(','))
-      .map((header) => header.toLowerCase())
+    normalizeList(PROXY_ALLOWED_HEADERS).map((header) => header.toLowerCase())
   );
 
   let customHeaders = {};
@@ -288,9 +280,13 @@ function copyResponseHeaders(upstreamHeaders, response) {
   }
 }
 
-function parseCsv(value = '') {
-  return value.split(',').map((item) => item.trim()).filter(Boolean);
+function normalizeList(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+  return String(value || '').split(',').map((item) => item.trim()).filter(Boolean);
 }
+
 
 function getSingleHeader(value) {
   return Array.isArray(value) ? value[0] : value;
